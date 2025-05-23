@@ -71,6 +71,7 @@ public:
     void insereNoFim(athletes data);
     void insereNoInicio(athletes data);
     bool inserePosicao(int posicao);
+    bool alterarEmPosicao(int posicao);
     //metodos adicionais
     bool Vazia();
     void imprime();
@@ -314,7 +315,104 @@ void lista::gravarEmBin(){
 
 }
 
-/*bool lista::alterarEmPosica(athletes& data) (nao sei se a declaracao seguirá como esta, pode alterar) */
+bool lista::alterarEmPosicao(int posicao) {
+ 
+    if ( posicao < 0 and posicao > tamanho) {
+        cout << "A posição que você digitou é inválida." << endl;
+        return false;
+    }
+
+    
+    noh* auxAtletas = primeiro;
+
+    if (posicao == 0) {
+        auxAtletas = primeiro;
+    }
+
+
+    if (posicao == tamanho){
+
+        auxAtletas = ultimo;
+    } 
+    else{
+
+        int posAux = 0;
+
+        while(posAux < posicao){
+            auxAtletas = auxAtletas->proximo;
+            posAux++;
+        }
+
+    }
+
+    cout << "Qual dado você quer alterar: " << endl;
+    cout << "Measure: ";
+    cout << auxAtletas->data.measure;
+    cout << " Quantile: ";
+    cout << auxAtletas->data.quantile;
+    cout << " Area: ";
+    cout << auxAtletas->data.area;
+    cout << " Sex: ";
+    cout << auxAtletas->data.sex;
+    cout << " Age: ";
+    cout << auxAtletas->data.age;
+    cout << " Geography: ";
+    cout << auxAtletas->data.geography;
+    cout << " Ethnic: ";
+    cout << auxAtletas->data.ethnic;
+    cout << " Value: ";
+    cout << auxAtletas->data.value;
+    cout << endl;
+    cout << "1. Measure " << "2. Quantile " << "3. Area " << "4. Sex " << "5. Age " << "6. Geography " << "7. Ethnic " << "8. Value " << "0. Não Altera" << endl;
+
+    int opcao = 0;
+        
+    do {
+
+        cin >> opcao;
+
+        switch(opcao) {
+            case 1: 
+                    
+                break;
+            case 2: 
+                    
+                break;
+            case 3: 
+                    
+                break;
+            case 4:
+                    
+                break;
+            case 5:
+                    
+                break;
+            case 6:
+                    
+                break;
+            case 7:
+                    
+                break;
+            case 8:
+                    
+                break;
+            case 0:
+                cout << "Saindo..." << endl;
+                return false;
+                break;
+            default:
+                cout << "Opção inválida." << endl;
+        }
+
+        cout << "Mudar mais algum dado? 1. Sim 2. Não" << endl;
+
+        cin >> opcao;
+
+    }while(opcao != 2);
+
+    return true;
+
+}
 
 int main() {
 
