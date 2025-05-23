@@ -4,7 +4,8 @@
 
 // implementar:
 // altera em posicao
-// imprimir trecho 
+// imprimir trecho
+// salvar alteracao
 
 using namespace std;
 
@@ -71,9 +72,11 @@ public:
     bool inserePosicao(int posicao);
     //metodos adicionais
     bool Vazia();
-    void lerArquivoCSV(string nomeArquivoCSV);
     void imprime();
     void imprimirTrecho(int posInicial, int posFinal);
+    int getTamanho();
+    // metodos que envolvem arquivos
+    void lerArquivoCSV(string nomeArquivoCSV);
 };
 
 // construtor e destrutor da classe
@@ -102,8 +105,7 @@ void lista::removeTodos(){
 	primeiro = NULL;
 	ultimo = NULL;
 	tamanho = 0;
-		
-
+	
 }
 
 // verificacao se esta vazia
@@ -276,6 +278,29 @@ bool lista::inserePosicao(int posicao){
 
     tamanho++;
     return true;
+
+}
+
+void lista::gravarEmBin(){
+
+    cout << "Qual o nome do arquivo que deseja gravar os dados?" << endl;
+    string nomeArquivoBin;
+    cin >> nomeArquivoBin;
+
+    ofstream saida(nomeArquivoBin);
+
+    if(!saida.is_open()){
+        throw runtime_error("Erro ao abrir arquivo de saída.")
+    }
+
+    arquivo.write(reinterpret_cast<char*>(&tamanho), sizeof(tamanho));
+
+    for (int i = 0; i < tamanho; i++) {
+        arquivo.write(reinterpret_cast<char*>(&lista[i]), sizeof(lista[i]));
+    }
+
+    arquivo.close();
+    cout << "Gravado em " << nomeArquivoBin << " com sucesso." << endl;
 
 }
 
