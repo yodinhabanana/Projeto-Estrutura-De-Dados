@@ -287,18 +287,21 @@ void lista::gravarEmBin(){
     string nomeArquivoBin;
     cin >> nomeArquivoBin;
 
-    ofstream saida(nomeArquivoBin);
+    ofstream saida(nomeArquivoBin, ios::binary);
 
     if(!saida.is_open()){
         throw runtime_error("Erro ao abrir arquivo de saída.")
     }
 
+
+    noh* atual = primeiro;
     arquivo.write(reinterpret_cast<char*>(&tamanho), sizeof(tamanho));
 
-    for (int i = 0; i < tamanho; i++) {
-        arquivo.write(reinterpret_cast<char*>(&lista[i]), sizeof(lista[i]));
+    while (atual != nullptr) {
+        arquivo.write(reinterpret_cast<char*>(&(atual->data)), sizeof(athletes));
+        atual = atual->proximo;
     }
-
+    
     arquivo.close();
     cout << "Gravado em " << nomeArquivoBin << " com sucesso." << endl;
 
