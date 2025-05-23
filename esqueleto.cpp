@@ -216,6 +216,10 @@ void lista::lerArquivoCSV(string nomeArquivoCSV){
     }
 
     entrada.close();
+
+    cout << "Arquivo lido com sucesso." << endl;
+    gravarEmBin();
+    cout << "Dados gravados em binario com sucesso." << endl;
 }
 
 void lista::imprime() {
@@ -229,7 +233,8 @@ void lista::imprime() {
 bool lista::inserePosicao(int posicao){
 
     if(posicao > tamanho or posicao < 0){
-        throw runtime_error("A posição que você digitou é inválida.");
+        cout << "A posição que você digitou é inválida." << endl;
+        return false;
     }
 
     athletes atleta_novo;
