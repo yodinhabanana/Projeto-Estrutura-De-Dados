@@ -1,7 +1,7 @@
 #include <iostream>
 #include <fstream>
 #include <string>
-
+// teste commit erick
 // implementar:
 // altera em posicao
 // imprimir trecho
