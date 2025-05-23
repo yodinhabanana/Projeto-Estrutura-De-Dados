@@ -77,6 +77,7 @@ public:
     int getTamanho();
     // metodos que envolvem arquivos
     void lerArquivoCSV(string nomeArquivoCSV);
+    void gravarEmBin();
 };
 
 // construtor e destrutor da classe
@@ -290,19 +291,19 @@ void lista::gravarEmBin(){
     ofstream saida(nomeArquivoBin, ios::binary);
 
     if(!saida.is_open()){
-        throw runtime_error("Erro ao abrir arquivo de saída.")
+        throw runtime_error("Erro ao abrir arquivo de saída.");
     }
 
 
     noh* atual = primeiro;
-    arquivo.write(reinterpret_cast<char*>(&tamanho), sizeof(tamanho));
+    saida.write(reinterpret_cast<char*>(&tamanho), sizeof(tamanho));
 
     while (atual != nullptr) {
-        arquivo.write(reinterpret_cast<char*>(&(atual->data)), sizeof(athletes));
+        saida.write(reinterpret_cast<char*>(&(atual->data)), sizeof(athletes));
         atual = atual->proximo;
     }
     
-    arquivo.close();
+    saida.close();
     cout << "Gravado em " << nomeArquivoBin << " com sucesso." << endl;
 
 }
