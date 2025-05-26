@@ -1,15 +1,15 @@
 #include <iostream>
 #include <fstream>
 #include <string>
-
+#include <stdexcept>
 
 // implementar:
 // altera em posicao
 // imprimir trecho
 // salvar alteracao
-//comentario mt legal hahahaha
+//comentario mt legal 
 
-
+#
 
 using namespace std;
 
