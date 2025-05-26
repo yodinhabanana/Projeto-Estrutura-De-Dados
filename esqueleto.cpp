@@ -9,8 +9,6 @@
 // salvar alteracao
 //comentario mt legal 
 
-#
-
 using namespace std;
 
 struct athletes{
