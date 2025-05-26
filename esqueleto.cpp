@@ -147,6 +147,18 @@ void lista::insereNoFim(athletes data) {
     tamanho++;
 }
 
+void lista::imprimirTrecho(int posInicial, int posFinal) {
+
+   if(posInicial < 0 || posFinal >= tamanho || posInicial > posFinal){
+    cout << "Posições inválidas." << endl;
+    return;
+   }
+
+   // terminar implementacao mais tarde...
+
+
+}
+
 bool lista::insereOrdenado(athletes data){
     
     noh* novo = new noh(data);
@@ -297,8 +309,6 @@ bool lista::inserePosicao(int posicao){
 
 }
 
-
-
 bool lista::alterarEmPosicao(int posicao) {
  
     if ( posicao < 0 and posicao > tamanho) {
@@ -413,6 +423,7 @@ int main() {
         cout << "1. Imprimir lista\n";
         cout << "2. Inserir em posição\n";
         cout << "3. Alterar em posição\n";
+        cout << "4. Imprimir trecho\n";
         cout << "0. Sair\n";
         cout << "Escolha uma opção: ";
         cin >> opcao;
@@ -430,6 +441,15 @@ int main() {
             }
             case 3: {
                 // implementar
+                break;
+            }
+            case 4: {
+                int posInicial, posFinal;
+                cout << "Digite a posição inicial: ";
+                cin >> posInicial;
+                cout << "Digite a posição final: ";
+                cin >> posFinal;
+                listaaux.imprimirTrecho(posInicial, posFinal);
                 break;
             }
             case 0:
