@@ -6,8 +6,7 @@
 // implementar:
 // altera em posicao
 // imprimir trecho
-// salvar alteracao
-//comentario mt legal 
+// salvar alteraca
 
 using namespace std;
 
@@ -79,8 +78,7 @@ public:
     void imprimirTrecho(int posInicial, int posFinal);
     int getTamanho();
     // metodos que envolvem arquivos
-    void lerArquivoCSV(string nomeArquivoCSV);
-    void gravarEmBin();
+    void transCsvEmBinario(string nomeArquivoCSV);
 };
 
 // construtor e destrutor da classe
@@ -194,16 +192,27 @@ bool lista::insereOrdenado(athletes data){
     return false;
 }
 
-void lista::lerArquivoCSV(string nomeArquivoCSV){
+void lista::transCsvEmBinario(string nomeArquivoCSV){
 
     athletes atleta;
-
     ifstream entrada(nomeArquivoCSV);
 
     if (!entrada){
         throw runtime_error("Erro, arquivo inexistente.");
     }
 
+    cout << "Qual o nome do arquivo binário no qual deseja guardar os dados? " << endl;
+    string nomeArquivoBin;
+    cin >> nomeArquivoBin;
+    ofstream saida(nomeArquivoBin, ios::binary);
+
+    if (!saida.is_open()) {
+        throw runtime_error("Erro ao abrir arquivo de saída.");
+    }
+
+    cout << "Aguarde enquanto os dados são lidos do arquivo CSV..." << endl;
+
+    // Lê o cabeçalho do arquivo CSV
     string cabecalho;
     getline(entrada, cabecalho);
     char lixo;
@@ -213,15 +222,13 @@ void lista::lerArquivoCSV(string nomeArquivoCSV){
         entrada >> lixo >> atleta.quantile >> lixo >> atleta.area >> lixo >> atleta.sex >> lixo >> atleta.age >> lixo >> atleta.geography >> lixo
                 >> atleta.ethnic >> lixo >> atleta.value;
 
-        insereOrdenado(atleta);
+        saida.write(reinterpret_cast<char*>(&atleta), sizeof(atleta));
 
     }
 
     entrada.close();
-
-    cout << "Arquivo lido com sucesso." << endl;
-    gravarEmBin();
     cout << "Dados gravados em binario com sucesso." << endl;
+    saida.close();
 }
 
 void lista::imprime() {
@@ -290,31 +297,7 @@ bool lista::inserePosicao(int posicao){
 
 }
 
-void lista::gravarEmBin(){
 
-    cout << "Qual o nome do arquivo que deseja gravar os dados?" << endl;
-    string nomeArquivoBin;
-    cin >> nomeArquivoBin;
-
-    ofstream saida(nomeArquivoBin, ios::binary);
-
-    if(!saida.is_open()){
-        throw runtime_error("Erro ao abrir arquivo de saída.");
-    }
-
-
-    noh* atual = primeiro;
-    saida.write(reinterpret_cast<char*>(&tamanho), sizeof(tamanho));
-
-    while (atual != nullptr) {
-        saida.write(reinterpret_cast<char*>(&(atual->data)), sizeof(athletes));
-        atual = atual->proximo;
-    }
-    
-    saida.close();
-    cout << "Gravado em " << nomeArquivoBin << " com sucesso." << endl;
-
-}
 
 bool lista::alterarEmPosicao(int posicao) {
  
@@ -422,7 +405,7 @@ int main() {
 
     cout << "Qual o nome do arquivo que deseja ler? ";
     cin >> nomeArquivoCSV;
-    listaaux.lerArquivoCSV(nomeArquivoCSV);
+    listaaux.transCsvEmBinario(nomeArquivoCSV);
 
     int opcao;
     do {
