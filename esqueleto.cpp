@@ -6,19 +6,19 @@
 // implementar:
 // altera em posicao
 // imprimir trecho
-// salvar alteraca
+// salvar alteração
 
 using namespace std;
 
 struct athletes{
 
-    unsigned measure;
-    unsigned quantile;
-    unsigned area;
-    unsigned sex;
-    unsigned age;
-    unsigned geography;
-    unsigned ethnic;
+    char measure[50];
+    char quantile[50];
+    char area[50];
+    char sex[10];
+    char age[10];
+    char geography[50];
+    char ethnic[50];
     float value;
 
 };
@@ -36,175 +36,28 @@ ostream& operator<<(ostream& os, const athletes& a) {
     return os;
 }
 
-class noh {
-    friend class lista;
+// classe do arquivo binario e suas operacoes
+class Binario{
 private:
-    athletes data;
-    noh* proximo;
-    noh* anterior;
-public:
-    noh(athletes d);
-};
-
-noh::noh(athletes d){
-    data = d;
-    proximo = nullptr;
-    anterior = nullptr;
-}
-
-// lista dinamicamente encadeada
-class lista {
-private:
-
-    noh* primeiro;
-    noh* ultimo;
-    int tamanho;
-    void removeTodos();
-
-public:
-
-    //construtor e destrutor da lista
-    lista();
-    ~lista();
-    // inserção, remoção e procura 
-    bool insereOrdenado(athletes data);
-    void insereNoFim(athletes data);
-    void insereNoInicio(athletes data);
-    bool inserePosicao(int posicao);
+     // inserção, remoção e procura 
     bool alterarEmPosicao(int posicao);
     //metodos adicionais
-    bool Vazia();
-    void imprime();
-    void imprimirTrecho(int posInicial, int posFinal);
-    int getTamanho();
+    void imprimirTrecho(int posInicial, int posFinal,string& nomeArquivoBinario);
     // metodos que envolvem arquivos
-    void transCsvEmBinario(string nomeArquivoCSV);
+    bool inserePosicao(int posicao);
+    void transBinarioEmCsv(string& nomeArquivoCSV);
+
+public:
+
+    void transCsvEmBinario(string& nomeArquivoCSV);
+    // construtor
+    Binario() = default;
+    // destrutor
+    ~Binario() = default;
+
 };
 
-// construtor e destrutor da classe
-lista::lista(){
-
-    ultimo = nullptr;
-    primeiro = nullptr;
-    tamanho = 0;
-}
-
-lista::~lista(){
-    removeTodos();
-}
-
-// remove todos os elementos da lista
-void lista::removeTodos(){
-	
-	noh* aux = primeiro;
-	
-	while (aux != NULL) {
-		noh* temp = aux;
-		aux = aux->proximo;
-		delete temp;
-	}
-	
-	primeiro = NULL;
-	ultimo = NULL;
-	tamanho = 0;
-	
-}
-
-// verificacao se esta vazia
-bool lista::Vazia(){
-    return tamanho == 0; 
-}
-
-void lista::insereNoInicio(athletes data) {
-
-    noh* novo = new noh(data);
-
-    if (Vazia()) {
-        primeiro = novo;
-        ultimo = novo;
-    } else {
-        novo->proximo = primeiro;
-        primeiro->anterior = novo;
-        primeiro = novo;
-    }
-
-    tamanho++;
-}
-
-void lista::insereNoFim(athletes data) {
-
-    noh* novo = new noh(data);
-
-    if (Vazia()){
-        primeiro = novo;
-        ultimo = novo;
-    } else{
-        ultimo->proximo = novo;
-        novo->anterior = ultimo;
-        ultimo = novo;
-    }
-
-    tamanho++;
-}
-
-void lista::imprimirTrecho(int posInicial, int posFinal) {
-
-   if(posInicial < 0 || posFinal >= tamanho || posInicial > posFinal){
-    cout << "Posições inválidas." << endl;
-    return;
-   }
-
-   // terminar implementacao mais tarde...
-
-
-}
-
-bool lista::insereOrdenado(athletes data){
-    
-    noh* novo = new noh(data);
-
-   if(Vazia()) {
-
-	    primeiro = novo;
-	    ultimo = novo;
-	    tamanho = 1;
-        return true;
-	}
-
-    if(novo->data.value < primeiro->data.value){
-        insereNoInicio(data);
-        return true;
-    }else if(novo-> data.value > ultimo->data.value){
-        insereNoFim(data);
-        return true;
-    }
-    else {
-        noh* aux = primeiro;
-
-        while (aux != nullptr) {
-
-            if(novo->data.value < aux->data.value) {
-                novo->proximo = aux;
-                novo->anterior = aux->anterior;
-
-                if (aux->anterior != nullptr){
-                    aux->anterior->proximo = novo;
-                }
-                else{
-                    primeiro = novo; // novo o primeiro da lista
-                }
-                aux->anterior = novo;
-                tamanho++;
-                return true;
-            }
-            aux = aux->proximo;
-        }
-    }
-
-    return false;
-}
-
-void lista::transCsvEmBinario(string nomeArquivoCSV){
+void Binario::transCsvEmBinario(string& nomeArquivoCSV){
 
     athletes atleta;
     ifstream entrada(nomeArquivoCSV);
@@ -243,17 +96,9 @@ void lista::transCsvEmBinario(string nomeArquivoCSV){
     saida.close();
 }
 
-void lista::imprime() {
-    noh* aux = primeiro;
-    while (aux != nullptr) {
-        cout << aux->data << endl;
-        aux = aux->proximo;
-    }
-}
+bool Binario::inserePosicao(int posicao){
 
-bool lista::inserePosicao(int posicao){
-
-    if(posicao > tamanho or posicao < 0){
+    if(posicao > 1 or posicao < 0){ // implementar tamanho do arquivo
         cout << "A posição que você digitou é inválida." << endl;
         return false;
     }
@@ -278,188 +123,120 @@ bool lista::inserePosicao(int posicao){
     cout << "Value: " << endl;
     cin >> atleta_novo.value;
 
+    // terminar implementacao 
 
-    if (posicao == 0) {
-        insereNoInicio(atleta_novo);
-        return true;
-    }
 
-    
-    if (posicao == tamanho) {
-        insereNoFim(atleta_novo);
-        return true;
-    }
-
-    noh* novo = new noh(atleta_novo);
-    noh* aux = primeiro;
-    int posAux = 0;
-
-    while(posAux < posicao){
-        aux = aux->proximo;
-        posAux++;
-    }
-
-    novo->proximo = aux;
-    novo->anterior = aux->anterior;
-    aux->anterior->proximo = novo;
-    aux->anterior = novo;
-
-    tamanho++;
     return true;
 
 }
 
-bool lista::alterarEmPosicao(int posicao) {
+void Binario::imprimirTrecho(int posInicial, int posFinal, string& nomeArquivoBinario) {
+
+    ifstream entrada(nomeArquivoBinario, ios::binary);
+
+
+    if (!entrada) {
+        cerr << "Erro ao abrir o arquivo binário." << endl;
+        return;
+    }
+
+    athletes atleta;
+
+    int tamanhoRegistro = sizeof(athletes);
+    entrada.seekg(0, ios::end);
+    int totalBytes = entrada.tellg();
+    int totalRegistros = totalBytes / tamanhoRegistro;
+
+    if (posInicial < 0 || posFinal >= totalRegistros || posInicial > posFinal) {
+        cerr << "Intervalo inválido." << endl;
+        return;
+    }
+
+    for (int i = posInicial; i <= posFinal; ++i) {
+        entrada.seekg(i * tamanhoRegistro);
+        entrada.read(reinterpret_cast<char*>(&atleta), tamanhoRegistro);
+        cout << atleta << endl;
+    }
+
+    entrada.close();
+}
+
+
+bool Binario::alterarEmPosicao(int posicao) {
  
-    if ( posicao < 0 and posicao > tamanho) {
+    if ( posicao < 0 || posicao > 255000) {
         cout << "A posição que você digitou é inválida." << endl;
         return false;
     }
 
-    
-    noh* auxAtletas = primeiro;
-
-    if (posicao == 0) {
-        auxAtletas = primeiro;
-    }
-
-
-    if (posicao == tamanho){
-
-        auxAtletas = ultimo;
-    } 
-    else{
-
-        int posAux = 0;
-
-        while(posAux < posicao){
-            auxAtletas = auxAtletas->proximo;
-            posAux++;
-        }
-
-    }
-
-    cout << "Qual dado você quer alterar: " << endl;
-    cout << "Measure: ";
-    cout << auxAtletas->data.measure;
-    cout << " Quantile: ";
-    cout << auxAtletas->data.quantile;
-    cout << " Area: ";
-    cout << auxAtletas->data.area;
-    cout << " Sex: ";
-    cout << auxAtletas->data.sex;
-    cout << " Age: ";
-    cout << auxAtletas->data.age;
-    cout << " Geography: ";
-    cout << auxAtletas->data.geography;
-    cout << " Ethnic: ";
-    cout << auxAtletas->data.ethnic;
-    cout << " Value: ";
-    cout << auxAtletas->data.value;
-    cout << endl;
-    cout << "1. Measure " << "2. Quantile " << "3. Area " << "4. Sex " << "5. Age " << "6. Geography " << "7. Ethnic " << "8. Value " << "0. Não Altera" << endl;
-
-    int opcao = 0;
-        
-    do {
-
-        cin >> opcao;
-
-        switch(opcao) {
-            case 1: 
-                    
-                break;
-            case 2: 
-                    
-                break;
-            case 3: 
-                    
-                break;
-            case 4:
-                    
-                break;
-            case 5:
-                    
-                break;
-            case 6:
-                    
-                break;
-            case 7:
-                    
-                break;
-            case 8:
-                    
-                break;
-            case 0:
-                cout << "Saindo..." << endl;
-                return false;
-                break;
-            default:
-                cout << "Opção inválida." << endl;
-        }
-
-        cout << "Mudar mais algum dado? 1. Sim 2. Não" << endl;
-
-        cin >> opcao;
-
-    }while(opcao != 2);
-
     return true;
 
 }
 
-int main() {
+void Binario::transBinarioEmCsv(string& nomeArquivoCSV){
 
-    lista listaaux;
+    return;
+}
+//implementacao do Menu para interação com o usuário
+
+void menuPrincipal(){
+
+    int opcao = 0;
+    Binario binario;
+    do{
+    cout << endl;
+    cout << "Bem-vindo ao sistema de gerenciamento de atletas!" << endl;
+    cout << "Escolha uma opção:" << endl;
+    cout << "1. Inserir atleta" << endl;
+    cout << "2. Alterar atleta" << endl;
+    cout << "3. Imprimir trecho" << endl;
+    cout << "4. Salvar alterações" << endl;
+    cout << "5. Buscar atleta" << endl;
+    cout << "6. Excluir atleta" << endl;
+    cout << "7. Sair" << endl;
+    cout << "Digite sua opção: ";
+    cin >> opcao;
+    
+        switch(opcao){
+            case 1:
+                cout << "Sendo implementado, volte mais tarde."<< endl;
+                break;
+            case 2:
+                cout << "Sendo implementado, volte mais tarde."<< endl;
+                break;
+            case 3:
+                cout << "Sendo implementado, volte mais tarde."<< endl;
+                break;
+            case 4:
+                cout << "Sendo implementado, volte mais tarde."<< endl;
+                break;
+            case 5:
+                cout << "Sendo implementado, volte mais tarde."<< endl;
+                break;
+            case 6:
+                cout << "Sendo implementado, volte mais tarde."<< endl;
+                break;
+            case 7:
+                cout << "Saindo..."<< endl;
+                return;
+                break;
+        }
+        
+    }while(opcao != 7);
+
+}
+
+int main(){
+
+    Binario binario;
     string nomeArquivoCSV;
 
     cout << "Qual o nome do arquivo que deseja ler? ";
     cin >> nomeArquivoCSV;
-    listaaux.transCsvEmBinario(nomeArquivoCSV);
+    binario.transCsvEmBinario(nomeArquivoCSV);
 
-    int opcao;
-    do {
-        cout << "\n--- MENU ---\n";
-        cout << "1. Imprimir lista\n";
-        cout << "2. Inserir em posição\n";
-        cout << "3. Alterar em posição\n";
-        cout << "4. Imprimir trecho\n";
-        cout << "0. Sair\n";
-        cout << "Escolha uma opção: ";
-        cin >> opcao;
-
-        switch(opcao) {
-            case 1:
-                listaaux.imprime();
-                break;
-            case 2: {
-                int pos;
-                cout << "Digite a posição para inserir: ";
-                cin >> pos;
-                listaaux.inserePosicao(pos);
-                break;
-            }
-            case 3: {
-                // implementar
-                break;
-            }
-            case 4: {
-                int posInicial, posFinal;
-                cout << "Digite a posição inicial: ";
-                cin >> posInicial;
-                cout << "Digite a posição final: ";
-                cin >> posFinal;
-                listaaux.imprimirTrecho(posInicial, posFinal);
-                break;
-            }
-            case 0:
-                cout << "Saindo..." << endl;
-                break;
-            default:
-                cout << "Opção inválida." << endl;
-        }
-
-    } while(opcao != 0);
+    //chamada do menu principal loools gayr
+    menuPrincipal();
 
     return 0;
 }
