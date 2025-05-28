@@ -38,7 +38,11 @@ ostream& operator<<(ostream& os, const athletes& a) {
 
 // classe do arquivo binario e suas operacoes
 class Binario{
+
+
 private:
+
+    string nomeArquivoBin;
      // inserção, remoção e procura 
     bool alterarEmPosicao(int posicao);
     //metodos adicionais
@@ -46,6 +50,7 @@ private:
     // metodos que envolvem arquivos
     bool inserePosicao(int posicao);
     void transBinarioEmCsv(string& nomeArquivoCSV);
+
 
 public:
 
@@ -173,8 +178,7 @@ bool Binario::alterarEmPosicao(int posicao) {
 
 }
 
-void Binario::transBinarioEmCsv(string& nomeArquivoCSV){
-
+void Binario::transBinarioEmCsv(string& nomeArquivoCSV)
     return;
 }
 //implementacao do Menu para interação com o usuário
@@ -205,7 +209,15 @@ void menuPrincipal(){
                 cout << "Sendo implementado, volte mais tarde."<< endl;
                 break;
             case 3:
-                cout << "Sendo implementado, volte mais tarde."<< endl;
+                int posInicial, posFinal;
+                cout << "Digite a posição inicial da impressão: ";
+                cin >> posInicial;
+                cout << endl;
+                cout << "Digite a posição final da impressão: ";
+                cin >> posFinal;
+                cout << endl;
+                binario.imprimirTrecho(posInicial, posFinal, nomeArquivoBinario);
+
                 break;
             case 4:
                 cout << "Sendo implementado, volte mais tarde."<< endl;
