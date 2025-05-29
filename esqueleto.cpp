@@ -99,6 +99,8 @@ void Binario::transCsvEmBinario(string& nomeArquivoCSV){
     entrada.close();
     cout << "Dados gravados em binario com sucesso." << endl;
     saida.close();
+
+    transBinarioEmCsv(nomeArquivoBin, nomeArquivoCSV);
 }
 
 bool Binario::inserePosicao(int posicao){
@@ -178,11 +180,33 @@ bool Binario::alterarEmPosicao(int posicao) {
 
 }
 
-void Binario::transBinarioEmCsv(string& nomeArquivoCSV)
-    return;
-}
-//implementacao do Menu para interação com o usuário
+void Binario::transBinarioEmCsv(string& nomeArquivoCSV){
+    
+    ifstream arquivoBin(nomeArquivoBin, ios::binary);
+    ofstream arquivoCsv(nomeArquivoCSV);
 
+    if(!arquivoBin || !arquivoCsv){
+        cerr << "Erro ao abrir arquivos." << endl;
+        return;
+    }
+
+    athletes a;
+
+    arquivoCsv << "cabeçalho gostoso que esqueci" << endl;
+
+    while(arquivoBin.read(reinterpret_cast<char*>(&a), sizeof(athletes))){
+        arquivoCsv << a.measure << ',' << a.quantile << ',' << a.area << ','
+                   << a.sex <<',' << a.age << ',' << a.geography << ','
+                   << a.ethnic << ',' << a.value << endl;
+    }
+
+    arquivoBin.close();
+    arquivoCsv.close();
+
+    cout << "Conversão de binário para csv concluída, verifique abrindo o arquivo." << endl;
+}
+
+//implementacao do Menu para interação com o usuário
 void menuPrincipal(){
 
     int opcao = 0;
