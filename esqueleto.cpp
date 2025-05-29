@@ -189,35 +189,27 @@ bool Binario::alterarEmPosicao(int posicao) {
 void Binario::transBinarioEmCsv(string nomeArquivoBin, string nomeArquivoCSV){
     
     ifstream arquivoBin(nomeArquivoBin, ios::binary);
-    cout << "Digite o nome do arquivo no qual deseja gravar: ";
-    string nomeArquivoCSVnovo;
-    cin >> nomeArquivoCSVnovo;
-    ofstream arquivoCsv(nomeArquivoCSVnovo);
-
     if(!arquivoBin){
         cerr << "Erro ao abrir o arquivo." << endl;
         return;
     }
 
+    cout << "Digite o nome do arquivo no qual deseja gravar: ";
+    string nomeArquivoCSVnovo;
+    cin >> nomeArquivoCSVnovo;
+    ofstream arquivoCsv(nomeArquivoCSVnovo);
+    if(!arquivoCsv){
+        cerr << "Erro ao criar o arquivo CSV." << endl;
+        return;
+    }
+
     athletes a;
-    
-    int tamanhoRegistro = sizeof(athletes);
-    arquivoBin.seekg(0, ios::end);
-    int totalBytes = arquivoBin.tellg();
-    int totalRegistros = totalBytes / tamanhoRegistro;
-    
-	arquivoCsv << "measure,quantile,area,sex,age,geography,ethnic,value" << endl;
-	
-	int i = 0;
-	
-    while(i < totalRegistros){
+    arquivoCsv << "measure,quantile,area,sex,age,geography,ethnic,value" << endl;
+
+    while(arquivoBin.read(reinterpret_cast<char*>(&a), sizeof(athletes))){
         arquivoCsv << a.measure << ',' << a.quantile << ',' << a.area  << ','
-                   << a.sex <<',' << a.age << ',' << a.geography << ','
-                   << a.ethnic << ',' << a.value;
-             
-        i++;
-        
-        arquivoBin.read(reinterpret_cast<char*>(&a), sizeof(athletes));
+                   << a.sex << ',' << a.age << ',' << a.geography << ','
+                   << a.ethnic << ',' << a.value << endl;
     }
 
     arquivoBin.close();
@@ -226,11 +218,13 @@ void Binario::transBinarioEmCsv(string nomeArquivoBin, string nomeArquivoCSV){
     cout << "Conversão de binário para csv concluída, verifique abrindo o arquivo." << endl;
 }
 
+
 //implementacao do Menu para interação com o usuário
 void menuPrincipal(){
 
     int opcao = 0;
     Binario binario;
+    
     do{
     cout << endl;
     cout << "Bem-vindo ao sistema de gerenciamento de atletas!" << endl;
