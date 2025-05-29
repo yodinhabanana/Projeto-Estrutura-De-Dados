@@ -42,19 +42,18 @@ class Binario{
 
 private:
 
-    string nomeArquivoBin;
      // inserção, remoção e procura 
     bool alterarEmPosicao(int posicao);
     //metodos adicionais
-    void imprimirTrecho(int posInicial, int posFinal,string& nomeArquivoBinario);
     // metodos que envolvem arquivos
     bool inserePosicao(int posicao);
-    void transBinarioEmCsv(string& nomeArquivoCSV);
 
 
 public:
 
-    void transCsvEmBinario(string& nomeArquivoCSV);
+    void transBinarioEmCsv(string nomeArquivoBin, string nomeArquivoCSV);
+    void transCsvEmBinario(string nomeArquivoCSV);
+    void imprimirTrecho(int posInicial, int posFinal);
     // construtor
     Binario() = default;
     // destrutor
@@ -62,8 +61,9 @@ public:
 
 };
 
-void Binario::transCsvEmBinario(string& nomeArquivoCSV){
+void Binario::transCsvEmBinario(string nomeArquivoCSV){
 
+    string arquivochamada = nomeArquivoCSV;
     athletes atleta;
     ifstream entrada(nomeArquivoCSV);
 
@@ -100,7 +100,7 @@ void Binario::transCsvEmBinario(string& nomeArquivoCSV){
     cout << "Dados gravados em binario com sucesso." << endl;
     saida.close();
 
-    transBinarioEmCsv(nomeArquivoBin, nomeArquivoCSV);
+    this->transBinarioEmCsv(nomeArquivoBin, arquivochamada);
 }
 
 bool Binario::inserePosicao(int posicao){
@@ -137,9 +137,9 @@ bool Binario::inserePosicao(int posicao){
 
 }
 
-void Binario::imprimirTrecho(int posInicial, int posFinal, string& nomeArquivoBinario) {
+void Binario::imprimirTrecho(int posInicial, int posFinal) {
 
-    ifstream entrada(nomeArquivoBinario, ios::binary);
+    ifstream entrada("nomeArquivoBinario", ios::binary);
 
 
     if (!entrada) {
@@ -168,7 +168,6 @@ void Binario::imprimirTrecho(int posInicial, int posFinal, string& nomeArquivoBi
     entrada.close();
 }
 
-
 bool Binario::alterarEmPosicao(int posicao) {
  
     if ( posicao < 0 || posicao > 255000) {
@@ -180,7 +179,7 @@ bool Binario::alterarEmPosicao(int posicao) {
 
 }
 
-void Binario::transBinarioEmCsv(string& nomeArquivoCSV){
+void Binario::transBinarioEmCsv(string nomeArquivoBin, string nomeArquivoCSV){
     
     ifstream arquivoBin(nomeArquivoBin, ios::binary);
     ofstream arquivoCsv(nomeArquivoCSV);
@@ -240,7 +239,7 @@ void menuPrincipal(){
                 cout << "Digite a posição final da impressão: ";
                 cin >> posFinal;
                 cout << endl;
-                binario.imprimirTrecho(posInicial, posFinal, nomeArquivoBinario);
+                binario.imprimirTrecho(posInicial, posFinal);
 
                 break;
             case 4:
