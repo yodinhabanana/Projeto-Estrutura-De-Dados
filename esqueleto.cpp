@@ -183,7 +183,6 @@ void Binario::imprimirTrecho(int posInicial, int posFinal){
     int totalBytes = entrada.tellg();
     int totalRegistros = totalBytes / tamanhoRegistro;
 
-
     if (posInicial < 0 || posFinal > totalRegistros || posInicial > posFinal) {
         cerr << "Intervalo inválido." << endl;
         return;
@@ -367,7 +366,6 @@ void menuPrincipal(){
 }
 
 int main(){
-
 
     menuPrincipal();
 
