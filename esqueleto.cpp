@@ -40,11 +40,10 @@ ostream& operator<<(ostream& os, const athletes& a) {
 // classe do arquivo binario e suas operacoes
 class Binario{
 
-
 private:
 
+    int tamanhoArquivo;
     string nomeArquivoBin;
-    bool alterarEmPosicao(int posicao);
     bool inserePosicao(int posicao);
 
 
@@ -53,17 +52,22 @@ public:
     void transBinarioEmCsv(string nomeArquivoBin, string nomeArquivoCSV);
     void transCsvEmBinario(string nomeArquivoCSV);
     void imprimirTrecho(int posInicial, int posFinal);
-    // construtor
+    bool alterarEmPosicao(int posicao);
     Binario() = default;
     // destrutor
     ~Binario() = default;
     string getNomeArquivo();
+    int getTamanho();
 
 };
 
 // retorna o nome do arquivo binario
 string Binario::getNomeArquivo(){
     return nomeArquivoBin;
+}
+
+int Binario::getTamanho(){
+    return tamanhoArquivo;
 }
 
 void Binario::transCsvEmBinario(string nomeArquivoCSV){
@@ -105,27 +109,27 @@ void Binario::transCsvEmBinario(string nomeArquivoCSV){
         saida.write(reinterpret_cast<char*>(&atleta), sizeof(atleta));
 
     }
-
+//teste
     entrada.close();
     cout << "Dados gravados em binario com sucesso." << endl;
     saida.close();
-
-    int tamanhoRegistro = sizeof(athletes);
-    entrada.seekg(0, ios::end);
-    int totalBytes = entrada.tellg();
-    int totalRegistros = totalBytes / tamanhoRegistro;
-
-    cout << "----------------------------------------------" << endl;
-    cout << "Número de registros gravados: " << endl;
-    cout << totalRegistros << endl;
-    cout << "----------------------------------------------" << endl;
-
 
     int opcao;
     cout << "Você deseja verificar se a leitura foi correta com a criação de outro CSV?" << endl;
     cout << "1. Sim" << endl;
     cout << "2. Não" << endl;
     cin >> opcao;
+
+
+    ifstream verTamanho(nomeArquivoBin, ios::binary);
+
+    int tamanhoRegistro = sizeof(athletes);
+    verTamanho.seekg(0, ios::end);
+    int totalBytes = verTamanho.tellg();
+    int totalRegistros = totalBytes / tamanhoRegistro;
+    tamanhoArquivo = totalRegistros;
+
+    cout << "Quantidade de dados gravados: " << tamanhoArquivo << endl;
 
     if(opcao == 1){
         transBinarioEmCsv(nomeArquivoBin, arquivochamada);
@@ -201,12 +205,11 @@ bool Binario::alterarEmPosicao(int posicao) {
 
     ifstream binario(nomeArquivoBin, ios::binary);
 
-    int tamanhoRegistro = sizeof(athletes);
-    binario.seekg(0, ios::end);
-    int totalBytes = binario.tellg();
-    int totalRegistros = totalBytes / tamanhoRegistro;
+    int tamanhoAtual = getTamanho();
 
-    if (posicao < 0 || posicao > totalRegistros){
+    cout << "Total registros: " << tamanhoAtual << endl;
+
+    if (posicao < 0 || posicao > tamanhoAtual){
         cout << "A posição que você digitou é inválida." << endl;
         return false;
     }
@@ -339,7 +342,6 @@ void menuPrincipal(){
     cin >> nomeArquivoCSV;
     binario.transCsvEmBinario(nomeArquivoCSV);
 
-
     do{
     cout << endl;
     cout << "Bem-vindo ao sistema de gerenciamento de atletas!" << endl;
@@ -360,7 +362,11 @@ void menuPrincipal(){
                 retornoMenu(retorno);
                 break;
             case 2:
-                cout << "Sendo implementado, volte mais tarde."<< endl;
+                int posicao;
+                cout << "Fale a posição na qual deseja alterar um dado: ";
+                cin >> posicao;
+                cout << endl;
+                binario.alterarEmPosicao(posicao);
                 retornoMenu(retorno);
                 break;
             case 3:
