@@ -110,6 +110,17 @@ void Binario::transCsvEmBinario(string nomeArquivoCSV){
     cout << "Dados gravados em binario com sucesso." << endl;
     saida.close();
 
+    int tamanhoRegistro = sizeof(athletes);
+    entrada.seekg(0, ios::end);
+    int totalBytes = entrada.tellg();
+    int totalRegistros = totalBytes / tamanhoRegistro;
+
+    cout << "----------------------------------------------" << endl;
+    cout << "Número de registros gravados: " << endl;
+    cout << totalRegistros << endl;
+    cout << "----------------------------------------------" << endl;
+
+
     int opcao;
     cout << "Você deseja verificar se a leitura foi correta com a criação de outro CSV?" << endl;
     cout << "1. Sim" << endl;
@@ -172,12 +183,13 @@ void Binario::imprimirTrecho(int posInicial, int posFinal){
     int totalBytes = entrada.tellg();
     int totalRegistros = totalBytes / tamanhoRegistro;
 
-    if (posInicial < 0 || posFinal >= totalRegistros || posInicial > posFinal) {
+
+    if (posInicial < 0 || posFinal > totalRegistros || posInicial > posFinal) {
         cerr << "Intervalo inválido." << endl;
         return;
     }
 
-    for (int i = posInicial; i <= posFinal; ++i) {
+    for (int i = posInicial; i <= posFinal; i++) {
         entrada.seekg(i * tamanhoRegistro);
         entrada.read(reinterpret_cast<char*>(&atleta), tamanhoRegistro);
         cout << atleta << endl;
@@ -187,11 +199,70 @@ void Binario::imprimirTrecho(int posInicial, int posFinal){
 }
 
 bool Binario::alterarEmPosicao(int posicao) {
- 
-    if ( posicao < 0 || posicao > 255000) {
+
+    ifstream binario(nomeArquivoBin, ios::binary);
+
+    int tamanhoRegistro = sizeof(athletes);
+    binario.seekg(0, ios::end);
+    int totalBytes = binario.tellg();
+    int totalRegistros = totalBytes / tamanhoRegistro;
+
+    if (posicao < 0 || posicao > totalRegistros){
         cout << "A posição que você digitou é inválida." << endl;
         return false;
     }
+
+    cout << "O que você deseja alterar? " << endl;
+    cout << "1. Measure." << endl;
+    cout << "2. Quantile." << endl;
+    cout << "3. Area." << endl;
+    cout << "4. Sex." << endl;
+    cout << "5. Age." << endl;
+    cout << "6. Geography." << endl;
+    cout << "7. Ethnic." << endl;
+    cout << "8. Value." << endl;
+
+    int opcao;
+
+    athletes alterar;
+    
+    switch(opcao){
+
+        case 1:
+            char novo_measure[10];
+            cin.getline(alterar.measure, 10);
+        break;
+        case 2:
+            char novo_quantile[100];
+            cin.getline(alterar.quantile, 100);
+        break;
+        case 3:
+            char novo_area[100];
+            cin.getline(alterar.area, 50);
+        break;
+        case 4:
+            char novo_sex[20];
+            cin.getline(alterar.sex, 20);
+        break;
+        case 5:
+            char novo_age[20];
+            cin.getline(alterar.age, 20);
+        break;
+        case 6:
+            char novo_geography[100];
+            cin.getline(alterar.geography, 100);
+        break;
+        case 7:
+            char novo_ethnic[100];
+            cin.getline(alterar.ethnic, 100);
+        break;
+        case 8:
+            float novo_value;
+            cin >> alterar.value;
+            cin.ignore();
+        break;
+    }
+
 
     return true;
 
@@ -230,7 +301,6 @@ bool Binario::inserePosicao(int posicao){
     return true;
 
 }
-
 
 
 //implementacao do Menu para interação com o usuário
