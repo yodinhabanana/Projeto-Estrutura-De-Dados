@@ -2,6 +2,7 @@
 #include <fstream>
 #include <string>
 #include <stdexcept>
+#include <sys/stat.h>
 
 // implementar:
 // altera em posicao
@@ -12,13 +13,13 @@ using namespace std;
 
 struct athletes{
 
-    char measure[50];
-    char quantile[50];
-    char area[50];
-    char sex[10];
-    char age[10];
-    char geography[50];
-    char ethnic[50];
+    char measure[10];
+    char quantile[100];
+    char area[100];
+    char sex[20];
+    char age[20];
+    char geography[100];
+    char ethnic[100];
     float value;
 
 };
@@ -85,13 +86,19 @@ void Binario::transCsvEmBinario(string nomeArquivoCSV){
     // Lê o cabeçalho do arquivo CSV
     string cabecalho;
     getline(entrada, cabecalho);
-    char lixo;
     
-    while(entrada >> atleta.measure){
+    while(entrada.good()){
         // leitura dos dados
-        entrada >> lixo >> atleta.quantile >> lixo >> atleta.area >> lixo >> atleta.sex >> lixo >> atleta.age >> lixo >> atleta.geography >> lixo
-                >> atleta.ethnic >> lixo >> atleta.value;
-
+        entrada.getline(atleta.measure, 50, ',');
+        entrada.getline(atleta.quantile, 100., ',');
+        entrada.getline(atleta.area, 50, ',');
+        entrada.getline(atleta.sex, 10, ',');
+        entrada.getline(atleta.age, 20, ',');
+        entrada.getline(atleta.geography, 100, ',');
+		entrada.getline(atleta.ethnic, 50, ',');
+		entrada >> atleta.value;
+		entrada.ignore();
+		
         saida.write(reinterpret_cast<char*>(&atleta), sizeof(atleta));
 
     }
@@ -100,7 +107,7 @@ void Binario::transCsvEmBinario(string nomeArquivoCSV){
     cout << "Dados gravados em binario com sucesso." << endl;
     saida.close();
 
-    this->transBinarioEmCsv(nomeArquivoBin, arquivochamada);
+    transBinarioEmCsv(nomeArquivoBin, arquivochamada);
 }
 
 bool Binario::inserePosicao(int posicao){
@@ -182,21 +189,35 @@ bool Binario::alterarEmPosicao(int posicao) {
 void Binario::transBinarioEmCsv(string nomeArquivoBin, string nomeArquivoCSV){
     
     ifstream arquivoBin(nomeArquivoBin, ios::binary);
-    ofstream arquivoCsv(nomeArquivoCSV);
+    cout << "Digite o nome do arquivo no qual deseja gravar: ";
+    string nomeArquivoCSVnovo;
+    cin >> nomeArquivoCSVnovo;
+    ofstream arquivoCsv(nomeArquivoCSVnovo);
 
-    if(!arquivoBin || !arquivoCsv){
-        cerr << "Erro ao abrir arquivos." << endl;
+    if(!arquivoBin){
+        cerr << "Erro ao abrir o arquivo." << endl;
         return;
     }
 
     athletes a;
-
-    arquivoCsv << "cabeçalho gostoso que esqueci" << endl;
-
-    while(arquivoBin.read(reinterpret_cast<char*>(&a), sizeof(athletes))){
-        arquivoCsv << a.measure << ',' << a.quantile << ',' << a.area << ','
+    
+    int tamanhoRegistro = sizeof(athletes);
+    arquivoBin.seekg(0, ios::end);
+    int totalBytes = arquivoBin.tellg();
+    int totalRegistros = totalBytes / tamanhoRegistro;
+    
+	arquivoCsv << "measure,quantile,area,sex,age,geography,ethnic,value" << endl;
+	
+	int i = 0;
+	
+    while(i < totalRegistros){
+        arquivoCsv << a.measure << ',' << a.quantile << ',' << a.area  << ','
                    << a.sex <<',' << a.age << ',' << a.geography << ','
-                   << a.ethnic << ',' << a.value << endl;
+                   << a.ethnic << ',' << a.value;
+             
+        i++;
+        
+        arquivoBin.read(reinterpret_cast<char*>(&a), sizeof(athletes));
     }
 
     arquivoBin.close();
