@@ -4,7 +4,8 @@
         "iostream": "cpp",
         "string": "cpp",
         "stdexcept": "cpp",
-        "fstream": "cpp"
+        "fstream": "cpp",
+        "istream": "cpp"
     },
     "C_Cpp.errorSquiggles": "disabled"
 }

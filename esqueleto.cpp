@@ -337,22 +337,23 @@ bool Binario::inserePosicao(int posicao){
     athletes atleta_novo;
 
     cout << "Digite os dados que você quer inserir: " << endl;
+    cin.ignore();
     cout << "Measure: " << endl;
-    cin >> atleta_novo.measure;
+    cin.getline(atleta_novo.measure, sizeof(atleta_novo.measure));
     cout << "Quantile: " << endl;
-    cin >> atleta_novo.quantile;
+    cin.getline(atleta_novo.quantile, sizeof(atleta_novo.quantile));
     cout << "Area: " << endl;
-    cin >> atleta_novo.area;
+    cin.getline(atleta_novo.area, sizeof(atleta_novo.area));
     cout << "Sex: " << endl;
-    cin >> atleta_novo.sex;
+    cin.getline(atleta_novo.sex, sizeof(atleta_novo.sex));
     cout << "Age: " << endl;
-    cin >> atleta_novo.age;
+    cin.getline(atleta_novo.age, sizeof(atleta_novo.age));
     cout << "Geography: " << endl;
-    cin >> atleta_novo.geography;
+    cin.getline(atleta_novo.geography, sizeof(atleta_novo.geography));
     cout << "Ethnic: " << endl;
-    cin >> atleta_novo.ethnic;
+    cin.getline(atleta_novo.ethnic, sizeof(atleta_novo.ethnic));
     cout << "Value: " << endl;
-    cin >> atleta_novo.value;
+    cin.getline(atleta_novo.value, sizeof(atleta_novo.value));
 
    ofstream novoBinario("arquivoTemp.bin", ios::binary);
 
@@ -366,13 +367,13 @@ bool Binario::inserePosicao(int posicao){
 
     while (binario.read(reinterpret_cast<char*>(&atletasLidos), sizeof(athletes))) {
         
-        if (posicoesLidas == posicao) {
+        if (posicoesLidas == posicao - 1) {
             novoBinario.write(reinterpret_cast<char*>(&atleta_novo), sizeof(athletes));
         }
         else {
             novoBinario.write(reinterpret_cast<char*>(&atletasLidos), sizeof(athletes));
-            posicoesLidas++;
         }
+        posicoesLidas++;
     }
     
     if (posicao == tamanhoAtual) {
@@ -471,13 +472,13 @@ void menuPrincipal(){
     int opcao = 0;
     Binario binario;
     bool retorno = false;
-    int tamanhoMostrar = binario.getTamanho();
 
     string nomeArquivoCSV;
     cout << "Qual o nome do arquivo que deseja ler? ";
     cin >> nomeArquivoCSV;
     binario.transCsvEmBinario(nomeArquivoCSV);
     string nomeArquivoBin = binario.getNomeArquivo();
+    int tamanhoMostrar = binario.getTamanho();
 
     do{
         cout << endl;
@@ -496,6 +497,7 @@ void menuPrincipal(){
         switch(opcao){
             case 1:
 
+                cout << "Existem " << tamanhoMostrar << " posições no arquivo." << endl;
                 int posicaoInserir;
                 cout << "Digite a posição na qual você deseja inserir um dado: ";
                 cin >> posicaoInserir;
