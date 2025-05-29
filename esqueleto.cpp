@@ -8,6 +8,7 @@
 // altera em posicao
 // imprimir trecho
 // salvar alteração
+// escrita e alterar mudar coisas
 
 using namespace std;
 
@@ -49,7 +50,7 @@ private:
 
 public:
 
-    void transBinarioEmCsv(string nomeArquivoBin, string nomeArquivoCSV);
+    void transBinarioEmCsv();
     void transCsvEmBinario(string nomeArquivoCSV);
     void imprimirTrecho(int posInicial, int posFinal);
     bool alterarEmPosicao(int posicao);
@@ -132,14 +133,16 @@ void Binario::transCsvEmBinario(string nomeArquivoCSV){
     cout << "Quantidade de dados gravados: " << tamanhoArquivo << endl;
 
     if(opcao == 1){
-        transBinarioEmCsv(nomeArquivoBin, arquivochamada);
+        transBinarioEmCsv();
     }else if(opcao == 2){
         return;
     }
     
 }
 
-void Binario::transBinarioEmCsv(string nomeArquivoBin, string nomeArquivoCSV){
+void Binario::transBinarioEmCsv(){
+
+    string nomeArquivoBin = getNomeArquivo();
     
     ifstream arquivoBin(nomeArquivoBin, ios::binary);
     if(!arquivoBin){
@@ -194,7 +197,7 @@ void Binario::imprimirTrecho(int posInicial, int posFinal){
 
     for (int i = posInicial; i <= posFinal; i++) {
         entrada.seekg(i * tamanhoRegistro);
-        entrada.read(reinterpret_cast<char*>(&atleta), tamanhoRegistro);
+        entrada.read(reinterpret_cast<char*>(&atleta), sizeof(athletes));
         cout << atleta << endl;
     }
 
@@ -203,11 +206,16 @@ void Binario::imprimirTrecho(int posInicial, int posFinal){
 
 bool Binario::alterarEmPosicao(int posicao) {
 
-    ifstream binario(nomeArquivoBin, ios::binary);
+    fstream binario(nomeArquivoBin, ios::in | ios::out | ios::binary);
 
     int tamanhoAtual = getTamanho();
 
     cout << "Total registros: " << tamanhoAtual << endl;
+
+    // chegando na posicao
+    athletes alterar;
+    binario.seekg(posicao * sizeof(athletes));
+    binario.read(reinterpret_cast<char*>(&alterar), sizeof(athletes));
 
     if (posicao < 0 || posicao > tamanhoAtual){
         cout << "A posição que você digitou é inválida." << endl;
@@ -225,9 +233,9 @@ bool Binario::alterarEmPosicao(int posicao) {
     cout << "8. Value." << endl;
 
     int opcao;
+    cin >> opcao;
+    cin.ignore();
 
-    athletes alterar;
-    
     switch(opcao){
 
         case 1:
@@ -265,6 +273,9 @@ bool Binario::alterarEmPosicao(int posicao) {
         break;
     }
 
+
+    binario.seekp(posicao * sizeof(athletes));
+    binario.write(reinterpret_cast<char*>(&alterar), sizeof(athletes));
 
     return true;
 
@@ -353,6 +364,7 @@ void menuPrincipal(){
     cout << "5. Buscar atleta" << endl;
     cout << "6. Excluir atleta" << endl;
     cout << "7. Sair" << endl;
+    cout << "8. Salvar em CSV" << endl;
     cout << "Digite sua opção: ";
     cin >> opcao;
     
@@ -396,6 +408,9 @@ void menuPrincipal(){
             case 7:
                 cout << "Saindo..."<< endl;
                 return;
+                break;
+            case 8:
+                binario.transBinarioEmCsv();
                 break;
         }
         
