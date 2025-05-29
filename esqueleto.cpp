@@ -301,12 +301,38 @@ bool Binario::inserePosicao(int posicao){
 
 }
 
+void retornoMenu(bool& retorno){
+    
+	cout << "Deseja retornar para o menu? Por favor responda com 'S' ou 's' para sim e 'N' ou 'n' para não." << endl;
+		
+	string resposta;
+	bool continuar = true;
+		
+	while (continuar){
+		cin >> resposta;
+
+		if (resposta == "S" or resposta == "s"){
+			continuar = false;
+			retorno = true;
+		}
+		else if (resposta == "N" or resposta == "n"){
+			continuar = false;
+			retorno = false;
+		}
+				
+		else {
+			continuar = false;
+			cout << "Por favor, digite uma resposta válida." << endl;
+		}
+	}
+}
 
 //implementacao do Menu para interação com o usuário
 void menuPrincipal(){
 
     int opcao = 0;
     Binario binario;
+    bool retorno = false;
 
     string nomeArquivoCSV;
     cout << "Qual o nome do arquivo que deseja ler? ";
@@ -331,9 +357,11 @@ void menuPrincipal(){
         switch(opcao){
             case 1:
                 cout << "Sendo implementado, volte mais tarde."<< endl;
+                retornoMenu(retorno);
                 break;
             case 2:
                 cout << "Sendo implementado, volte mais tarde."<< endl;
+                retornoMenu(retorno);
                 break;
             case 3:
                 int posInicial, posFinal;
@@ -344,16 +372,20 @@ void menuPrincipal(){
                 cin >> posFinal;
                 cout << endl;
                 binario.imprimirTrecho(posInicial, posFinal);
+                retornoMenu(retorno);
 
                 break;
             case 4:
                 cout << "Sendo implementado, volte mais tarde."<< endl;
+                retornoMenu(retorno);
                 break;
             case 5:
                 cout << "Sendo implementado, volte mais tarde."<< endl;
+                retornoMenu(retorno);
                 break;
             case 6:
                 cout << "Sendo implementado, volte mais tarde."<< endl;
+                retornoMenu(retorno);
                 break;
             case 7:
                 cout << "Saindo..."<< endl;
