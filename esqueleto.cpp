@@ -70,7 +70,7 @@ string Binario::getNomeArquivo(){
 int Binario::getTamanho(){
     return tamanhoArquivo;
 }
-
+ta
 void Binario::espiarPosicao(int posicao){
 
     string nomeArquivoBin = getNomeArquivo();
@@ -196,7 +196,6 @@ void Binario::transCsvEmBinario(string nomeArquivoCSV){
 			cout << "2. Não" << endl;
 			cin >> opcao;
 
-
 			ifstream verTamanho(nomeArquivoBin, ios::binary);
 
 			int tamanhoRegistro = sizeof(athletes);
@@ -215,7 +214,7 @@ void Binario::transCsvEmBinario(string nomeArquivoCSV){
 		}
 
 		else {
-			cout << "			--------------------------------------------------------------------" << endl;
+			cout << "--------------------------------------------------------------------" << endl;
 			cout << "Por favor, não se esqueça de adicionar o '.bin' no final do nome." << endl; 
 			}
 		}
