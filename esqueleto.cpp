@@ -14,13 +14,13 @@ using namespace std;
 struct athletes{
 
     char measure[10];
-    char quantile[100];
-    char area[100];
-    char sex[20];
+    char quantile[80];
+    char area[50];
+    char sex[15];
     char age[20];
-    char geography[100];
-    char ethnic[100];
-    float value;
+    char geography[90];
+    char ethnic[60];
+    char value[15];
 
 };
 
@@ -70,7 +70,7 @@ string Binario::getNomeArquivo(){
 int Binario::getTamanho(){
     return tamanhoArquivo;
 }
-ta
+
 void Binario::espiarPosicao(int posicao){
 
     string nomeArquivoBin = getNomeArquivo();
@@ -171,15 +171,14 @@ void Binario::transCsvEmBinario(string nomeArquivoCSV){
     
 			while(entrada){
 				// leitura dos dados
-				entrada.getline(atleta.measure, 50, ',');
-				entrada.getline(atleta.quantile, 100., ',');
+				entrada.getline(atleta.measure, 10, ',');
+				entrada.getline(atleta.quantile, 80, ',');
 				entrada.getline(atleta.area, 50, ',');
-				entrada.getline(atleta.sex, 10, ',');
+				entrada.getline(atleta.sex, 15, ',');
 				entrada.getline(atleta.age, 20, ',');
-				entrada.getline(atleta.geography, 100, ',');
-				entrada.getline(atleta.ethnic, 50, ',');
-				entrada >> atleta.value;
-				entrada.ignore();
+				entrada.getline(atleta.geography, 90, ',');
+				entrada.getline(atleta.ethnic, 60, ',');
+				entrada.getline(atleta.value, 15);
 
                 if (entrada){
                     saida.write(reinterpret_cast<char*>(&atleta), sizeof(athletes));
@@ -452,18 +451,18 @@ void menuPrincipal(){
     binario.transCsvEmBinario(nomeArquivoCSV);
 
     do{
-    cout << endl;
-    cout << "Bem-vindo ao sistema de gerenciamento de atletas!" << endl;
-    cout << "Escolha uma opção:" << endl;
-    cout << "1. Inserir atleta" << endl;
-    cout << "2. Alterar atleta" << endl;
-    cout << "3. Imprimir trecho" << endl;
-    cout << "4. Salvar alterações" << endl;
-    cout << "5. Buscar atleta" << endl;
-    cout << "6. Excluir atleta" << endl;
-    cout << "7. Sair" << endl;
-    cout << "Digite sua opção: ";
-    cin >> opcao;
+        cout << endl;
+        cout << "Bem-vindo ao sistema de gerenciamento de atletas!" << endl;
+        cout << "Escolha uma opção:" << endl;
+        cout << "1. Inserir atleta" << endl;
+        cout << "2. Alterar atleta" << endl;
+        cout << "3. Imprimir trecho" << endl;
+        cout << "4. Salvar alterações" << endl;
+        cout << "5. Buscar atleta" << endl;
+        cout << "6. Excluir atleta" << endl;
+        cout << "7. Sair" << endl;
+        cout << "Digite sua opção: ";
+        cin >> opcao;
     
         switch(opcao){
             case 1:
@@ -486,7 +485,6 @@ void menuPrincipal(){
                         binario.espiarPosicao(posicao);
                     }
                 };
-                
                 retornoMenu(retorno);
                 break;
             case 3:
