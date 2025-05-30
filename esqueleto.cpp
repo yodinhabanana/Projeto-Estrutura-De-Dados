@@ -46,7 +46,6 @@ private:
     char nomeArquivoBin[50];
     bool inserePosicao(int posicao);
 
-
 public:
 	
 	bool testarNomeArquivoBin(char* nomeArquivoBin);
@@ -72,8 +71,23 @@ int Binario::getTamanho(){
     return tamanhoArquivo;
 }
 
-void espiarPosicao(int posicao){
-    cout << "Em construção." << endl;
+void Binario::espiarPosicao(int posicao){
+
+    string nomeArquivoBin = getNomeArquivo();
+    
+    ifstream arquivo(nomeArquivoBin, ios::binary);
+
+    if(!arquivo){
+        throw runtime_error("Erro, arquivo inexistente.");
+    }
+
+    athletes atleta;
+    arquivo.seekg(posicao * sizeof(athletes));
+    arquivo.read(reinterpret_cast<char*>(&atleta), sizeof(athletes));
+
+    cout << atleta << endl;
+
+    arquivo.close();
     return;
 }
 
@@ -273,18 +287,18 @@ void Binario::imprimirTrecho(int posInicial, int posFinal){
 
 int Binario::alterarEmPosicao(int posicao) {
 
-    ifstream binario(nomeArquivoBin, ios::in | ios::out | ios::binary);
+    fstream binario(nomeArquivoBin, ios::in | ios::out | ios::binary);
 
     if(!binario){
         cout << "Erro ao abrir arquivo binário." << endl;
-        return 0;
+        return -1;
     }
 
     int tamanhoAtual = getTamanho();
 
     if (posicao < 0 || posicao > tamanhoAtual){
         cout << "A posição que você digitou é inválida." << endl;
-        return 0;
+        return -1;
     }
 
     cout << "O que você deseja alterar? " << endl;
@@ -301,66 +315,64 @@ int Binario::alterarEmPosicao(int posicao) {
 
     int opcao;
     cin >> opcao;
+    cin.ignore();
+
+
+    if(opcao == 9){
+        cout << "Nenhuma alteração feita." << endl;
+        return -1;
+    }
 
     athletes atleta;
 
     binario.seekg(posicao * sizeof(athletes));
     binario.read(reinterpret_cast<char*>(&atleta), sizeof(athletes));
 
-    do{
-        switch(opcao){
-            case 1:
-                cout << "Digite o novo 'Measure' do atleta: " << endl;
-                cin.getline(atleta.measure, sizeof(atleta.measure));
-                return posicao;
-            break;
-            case 2:
-                cout << "Digite o novo 'Quantile' do atleta: " << endl;
-                cin.getline(atleta.quantile, sizeof(atleta.quantile));
-                return posicao;
-            break;
-            case 3:
-                cout << "Digite a nova 'Area' do atleta: " << endl;
-                cin.getline(atleta.area, sizeof(atleta.area));
-                return posicao;
-            break;
-            case 4:
-                cout << "Digite o novo 'Sex' do atleta: " << endl;
-                cin.getline(atleta.sex, sizeof(atleta.sex));
-                return posicao;
-            break;
-            case 5:
-                cout << "Digite o novo 'Age' do atleta: " << endl;
-                cin.getline(atleta.age, sizeof(atleta.age));
-                return posicao;
-            break;
-            case 6:
-                cout << "Digite o novo 'Geography' do atleta: " << endl;
-                cin.getline(atleta.geography, sizeof(atleta.geography));
-                return posicao;
-            break;
-            case 7:
-                cout << "Digite o novo 'Ethnic' do atleta: " << endl;
-                cin.getline(atleta.ethnic, sizeof(atleta.ethnic));
-                return posicao;
-            break;
-            case 8:
-                cout << "Digite o novo 'Value' do atleta: " << endl;
-                float novo_value;
-                cin >> atleta.value;
-                cin.ignore();
-                return posicao;
-
-            default:
-                cout <<"Opção inválida. " << endl;
-            break;
+    switch(opcao){
+        case 1:
+            cout << "Digite o novo 'Measure' do atleta: " << endl;
+            cin.getline(atleta.measure, sizeof(atleta.measure));
+        break;
+        case 2:
+            cout << "Digite o novo 'Quantile' do atleta: " << endl;
+            cin.getline(atleta.quantile, sizeof(atleta.quantile));
+        break;
+        case 3:
+            cout << "Digite a nova 'Area' do atleta: " << endl;
+            cin.getline(atleta.area, sizeof(atleta.area));                
+        break;
+        case 4:
+            cout << "Digite o novo 'Sex' do atleta: " << endl;
+            cin.getline(atleta.sex, sizeof(atleta.sex));              
+        break;
+        case 5:
+            cout << "Digite o novo 'Age' do atleta: " << endl;
+            cin.getline(atleta.age, sizeof(atleta.age));                
+        break;
+        case 6:
+            cout << "Digite o novo 'Geography' do atleta: " << endl;
+            cin.getline(atleta.geography, sizeof(atleta.geography));
+        break;
+        case 7:
+            cout << "Digite o novo 'Ethnic' do atleta: " << endl;
+            cin.getline(atleta.ethnic, sizeof(atleta.ethnic));
+        break;
+        case 8:
+            cout << "Digite o novo 'Value' do atleta: " << endl;
+            float novo_value;
+            cin >> atleta.value;
+            cin.ignore();
+        default:
+            cout <<"Opção inválida. " << endl;
+            return -1;
         }
 
-    }while(opcao != 9);
-
+    binario.seekp(posicao * sizeof(athletes));
+    binario.write(reinterpret_cast<char*>(&atleta), sizeof(athletes));
     binario.close();
     cout << "Registro atualizado com sucesso." << endl;
-    return 0;
+    return posicao;
+
 }
 
 bool Binario::inserePosicao(int posicao){
@@ -375,7 +387,6 @@ bool Binario::inserePosicao(int posicao){
         cout << "A posição que você digitou é inválida." << endl;
         return false;
     }
-
 
     athletes atleta_novo;
 
@@ -398,7 +409,6 @@ bool Binario::inserePosicao(int posicao){
     cin >> atleta_novo.value;
 
     // terminar implementacao 
-
 
     return true;
 
@@ -466,9 +476,9 @@ void menuPrincipal(){
                 cout << "Fale a posição na qual deseja alterar um dado: ";
                 cin >> posicao;
                 cout << endl;
-                if(binario.alterarEmPosicao(posicao) != 0){
 
-                    cout << "Você deseja ver como seu registro está atualmente? " << endl;
+                if(binario.alterarEmPosicao(posicao) >= 0){
+                    cout << "Você deseja ver como seu registro está atualmente na nova posição? " << endl;
                     cout << "1. Sim." << endl;
                     cout << "2. Não." << endl;
                     int novaOpcao;
@@ -476,10 +486,8 @@ void menuPrincipal(){
                     if(novaOpcao == 1){
                         binario.espiarPosicao(posicao);
                     }
-                   
                 };
-
-
+                
                 retornoMenu(retorno);
                 break;
             case 3:
