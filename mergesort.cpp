@@ -1,10 +1,10 @@
-//arquivo para teste do mergesort multiway, no qual dividimos os arquivos em k arquivos com aproximadamente o
-// mesmo numero de entradas e depois os juntamos ao final, ja ordenados
+#include <iostream>
+#include <fstream>
+#include <string>
 
-#include "base.h"
+using namespace std;
 
-struct athletes{
-
+struct athletes {
     char measure[10];
     char quantile[80];
     char area[50];
@@ -13,10 +13,9 @@ struct athletes{
     char geography[90];
     char ethnic[60];
     char value[15];
-
 };
 
-void dividirArquivo(ifstream& arquivoBinario, string nomeArquivo, int registrosPorBloco){
+void dividirArquivo(ifstream& arquivoBinario, const string& nomeArquivo, int registrosPorBloco){
 
     athletes reg[10000];
     int registrosLidos = 0;
@@ -27,57 +26,42 @@ void dividirArquivo(ifstream& arquivoBinario, string nomeArquivo, int registrosP
         }
     }
 
-    int i = 0;
-    while(i <= registrosPorBloco){
-        "base.h".read(reinterpret_cast<char*>(&reg[registrosLidos]), sizeof(athletes));
-        i++;
-    }
+    if (registrosLidos > 0){
 
-    if(registrosLidos > 0){
         ofstream saida(nomeArquivo, ios::binary);
+
+        if (!saida){
+            cout << "Erro ao criar arquivo " << nomeArquivo << endl;
+            return;
+        }
+        
         saida.write(reinterpret_cast<char*>(reg), registrosLidos * sizeof(athletes));
         saida.close();
+
+        cout << "Arquivo " << nomeArquivo << " criado com " << registrosLidos << " registros." << endl;
     }
-
-    cout << "Arquivo " << nomeArquivo << " criado com " << registrosLidos << " registros." << endl;
-
 }
 
-int main(){
+int main() {
+    string nomeArquivoBinario;
+    cout << "Digite o nome do arquivo binário para dividir: ";
+    cin >> nomeArquivoBinario;
 
-    ifstream arquivoBinario("base.h", ios::binary);
-
+    ifstream arquivoBinario(nomeArquivoBinario, ios::binary);
     if (!arquivoBinario) {
-        cout << "Erro ao abrir arquivo binario" << endl;
+        cout << "Erro ao abrir arquivo binário." << endl;
         return 1;
     }
 
     const int registrosPorBloco = 10000;
     int i = 0;
 
-    while(arquivoBinario){
-        string nomeArquivo = "temp" + to_string(i) + ".bin"; 
+    while (arquivoBinario) {
+        string nomeArquivo = "temp" + to_string(i) + ".bin";
         dividirArquivo(arquivoBinario, nomeArquivo, registrosPorBloco);
         i++;
     }
 
-
     arquivoBinario.close();
-
     return 0;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

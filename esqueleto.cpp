@@ -3,7 +3,6 @@
 #include <string>
 #include <stdexcept>
 
-
 // implementar:
 // altera em posicao
 // imprimir trecho
