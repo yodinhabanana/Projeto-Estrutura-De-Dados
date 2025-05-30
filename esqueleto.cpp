@@ -4,8 +4,6 @@
 #include <stdexcept>
 
 // implementar:
-// altera em posicao
-// imprimir trecho
 // salvar alteração
 
 using namespace std;
@@ -41,9 +39,8 @@ class Binario{
 
 private:
 
-    int tamanhoArquivo;
+    int tamanhoArquivo = 0;
     char nomeArquivoBin[50];
-    bool inserePosicao(int posicao);
 
 public:
 	
@@ -54,10 +51,10 @@ public:
     int alterarEmPosicao(int posicao);
     void espiarPosicao(int posicao);
     Binario() = default;
-    // destrutor
     ~Binario() = default;
     string getNomeArquivo();
     int getTamanho();
+    bool inserePosicao(int posicao);
 
 };
 
@@ -67,7 +64,15 @@ string Binario::getNomeArquivo(){
 }
 
 int Binario::getTamanho(){
-    return tamanhoArquivo;
+
+    ifstream verTamanho(nomeArquivoBin, ios::binary);
+
+    int tamanhoRegistro = sizeof(athletes);
+    verTamanho.seekg(0, ios::end);
+    int totalBytes = verTamanho.tellg();
+	int totalRegistros = totalBytes / tamanhoRegistro;
+
+	return totalRegistros+1;
 }
 
 void Binario::espiarPosicao(int posicao){
@@ -150,7 +155,7 @@ void Binario::transCsvEmBinario(string nomeArquivoCSV){
     
 	while (!nomeCorreto) {
 		
-		cout << "Qual o nome do arquivo binário no qual deseja guardar os dados? " << endl;
+		cout << "Qual o nome do arquivo binário no qual deseja guardar os dados? ";
 		cin >> nomeArquivoBin;
 		
 		if (testarNomeArquivoBin(nomeArquivoBin)) {
@@ -196,13 +201,9 @@ void Binario::transCsvEmBinario(string nomeArquivoCSV){
 
 			ifstream verTamanho(nomeArquivoBin, ios::binary);
 
-			int tamanhoRegistro = sizeof(athletes);
-			verTamanho.seekg(0, ios::end);
-			int totalBytes = verTamanho.tellg();
-			int totalRegistros = totalBytes / tamanhoRegistro;
-			tamanhoArquivo = totalRegistros;
-
-			cout << "Quantidade de dados gravados: " << tamanhoArquivo << endl;
+            // atribuo o tamanho do arquivo
+            int quantidade = getTamanho();
+			cout << "Quantidade de dados gravados: " << quantidade << endl;
 
 			if (opcao == 1){
 				transBinarioEmCsv(nomeArquivoBin, arquivochamada);
@@ -375,10 +376,7 @@ int Binario::alterarEmPosicao(int posicao) {
 bool Binario::inserePosicao(int posicao){
 
     ifstream binario(nomeArquivoBin, ios::binary);
-
     int tamanhoAtual = getTamanho();
-
-    cout << "Total registros: " << tamanhoAtual << endl;
 
     if (posicao < 0 || posicao > tamanhoAtual){
         cout << "A posição que você digitou é inválida." << endl;
@@ -405,7 +403,38 @@ bool Binario::inserePosicao(int posicao){
     cout << "Value: " << endl;
     cin >> atleta_novo.value;
 
-    // terminar implementacao 
+   ofstream novoBinario("arquivoTemp.bin", ios::binary);
+
+   if (!novoBinario) {
+        cerr << "Erro ao criar o arquivo binário." << endl;
+        return false;
+    }
+
+    athletes atletasLidos;
+    int posicoesLidas = 0;
+
+    while (binario.read(reinterpret_cast<char*>(&atletasLidos), sizeof(athletes))) {
+        
+        if (posicoesLidas == posicao) {
+            novoBinario.write(reinterpret_cast<char*>(&atleta_novo), sizeof(athletes));
+        }
+        else {
+            novoBinario.write(reinterpret_cast<char*>(&atletasLidos), sizeof(athletes));
+            posicoesLidas++;
+        }
+    }
+    
+    if (posicao == tamanhoAtual) {
+		novoBinario.write(reinterpret_cast<char*>(&atletasLidos), sizeof(athletes));
+	}
+		
+
+    tamanhoArquivo++;
+    binario.close();
+    novoBinario.close();
+    
+    remove(nomeArquivoBin);
+    rename("arquivoTemp.bin", nomeArquivoBin);
 
     return true;
 
@@ -443,11 +472,13 @@ void menuPrincipal(){
     int opcao = 0;
     Binario binario;
     bool retorno = false;
+    int tamanhoMostrar = binario.getTamanho();
 
     string nomeArquivoCSV;
     cout << "Qual o nome do arquivo que deseja ler? ";
     cin >> nomeArquivoCSV;
     binario.transCsvEmBinario(nomeArquivoCSV);
+    string nomeArquivoBin = binario.getNomeArquivo();
 
     do{
         cout << endl;
@@ -456,26 +487,35 @@ void menuPrincipal(){
         cout << "1. Inserir atleta" << endl;
         cout << "2. Alterar atleta" << endl;
         cout << "3. Imprimir trecho" << endl;
-        cout << "4. Salvar alterações" << endl;
-        cout << "5. Buscar atleta" << endl;
-        cout << "6. Excluir atleta" << endl;
+        cout << "4. Buscar atleta" << endl;
+        cout << "5. Excluir atleta" << endl;
+        cout << "6. Transformar em csv." << endl;
         cout << "7. Sair" << endl;
         cout << "Digite sua opção: ";
         cin >> opcao;
     
         switch(opcao){
             case 1:
-                cout << "Sendo implementado, volte mais tarde."<< endl;
+
+                int posicaoInserir;
+                cout << "Digite a posição na qual você deseja inserir um dado: ";
+                cin >> posicaoInserir;
+                cout << endl;
+                
+                if (binario.inserePosicao(posicaoInserir)) {
+					cout << "O atleta foi inserido na posição " << posicaoInserir << "." << endl;
+				}
+
                 retornoMenu(retorno);
                 break;
             case 2:
                 int posicao;
-                cout << "Fale a posição na qual deseja alterar um dado: ";
+                cout << "Digite a posição na qual deseja alterar um dado: ";
                 cin >> posicao;
                 cout << endl;
-
                 if(binario.alterarEmPosicao(posicao) >= 0){
-                    cout << "Você deseja ver como seu registro está atualmente na nova posição? " << endl;
+
+                    cout << "Você deseja ver como seu registro está atualmente?" << endl;
                     cout << "1. Sim." << endl;
                     cout << "2. Não." << endl;
                     int novaOpcao;
@@ -483,7 +523,7 @@ void menuPrincipal(){
                     if(novaOpcao == 1){
                         binario.espiarPosicao(posicao);
                     }
-                };
+                }
                 retornoMenu(retorno);
                 break;
             case 3:
@@ -507,7 +547,7 @@ void menuPrincipal(){
                 retornoMenu(retorno);
                 break;
             case 6:
-                cout << "Sendo implementado, volte mais tarde."<< endl;
+                binario.transBinarioEmCsv(nomeArquivoBin, nomeArquivoCSV);
                 retornoMenu(retorno);
                 break;
             case 7:
@@ -516,8 +556,7 @@ void menuPrincipal(){
                 break;
         }
         
-    }while(opcao != 7);
-
+    }while(retorno && opcao != 7);
 }
 
 int main(){
