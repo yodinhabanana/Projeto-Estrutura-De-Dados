@@ -43,10 +43,10 @@ void dividirArquivo(ifstream& arquivoBinario, const string& nomeArquivo, int reg
 }
 
 int main() {
+    
     string nomeArquivoBinario;
     cout << "Digite o nome do arquivo binário para dividir: ";
     cin >> nomeArquivoBinario;
-    nomeArquivoBinario += ".bin";
     
     ifstream arquivoBinario(nomeArquivoBinario, ios::binary);
     if (!arquivoBinario) {
