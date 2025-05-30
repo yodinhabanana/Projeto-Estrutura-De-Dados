@@ -46,7 +46,8 @@ int main() {
     string nomeArquivoBinario;
     cout << "Digite o nome do arquivo binário para dividir: ";
     cin >> nomeArquivoBinario;
-
+    nomeArquivoBinario += ".bin";
+    
     ifstream arquivoBinario(nomeArquivoBinario, ios::binary);
     if (!arquivoBinario) {
         cout << "Erro ao abrir arquivo binário." << endl;

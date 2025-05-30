@@ -44,7 +44,6 @@ private:
 
 public:
 	
-	bool testarNomeArquivoBin(char* nomeArquivoBin);
     void transBinarioEmCsv(string nomeArquivoBin, string nomeArquivoCSV);
     void transCsvEmBinario(string nomeArquivoCSV);
     void imprimirTrecho(int posInicial, int posFinal);
@@ -95,56 +94,8 @@ void Binario::espiarPosicao(int posicao){
     return;
 }
 
-bool testarNomeArquivoCSV(char* nomeDoCSV){
-	
-	int tamanhoNomeArquivo = 0;
-	
-	while (nomeDoCSV[tamanhoNomeArquivo] != '\0'){
-		tamanhoNomeArquivo++;
-	}
-	
-	if (tamanhoNomeArquivo < 5){
-		return false;
-	}
-	
-	else if (nomeDoCSV[tamanhoNomeArquivo - 4] == '.' and
-        nomeDoCSV[tamanhoNomeArquivo - 3] == 'c' and
-        nomeDoCSV[tamanhoNomeArquivo - 2] == 's' and
-        nomeDoCSV[tamanhoNomeArquivo - 1] == 'v') {
-            
-        return true;
-        
-	}
-	
-	return false;
-	
-}
-
-bool Binario::testarNomeArquivoBin(char* nomeArquivoBin){
-	
-	int tamanhoNomeArquivo = 0;
-	
-	while (nomeArquivoBin[tamanhoNomeArquivo] != '\0'){
-		tamanhoNomeArquivo++;
-	}
-	
-	if (tamanhoNomeArquivo < 5){
-		return false;
-	}
-	
-	else if (nomeArquivoBin[tamanhoNomeArquivo - 4] == '.' and
-        nomeArquivoBin[tamanhoNomeArquivo - 3] == 'b' and
-        nomeArquivoBin[tamanhoNomeArquivo - 2] == 'i' and
-        nomeArquivoBin[tamanhoNomeArquivo - 1] == 'n') {
-            
-        return true;
-	}
-	return false;
-}
-
 void Binario::transCsvEmBinario(string nomeArquivoCSV){
 
-	bool nomeCorreto = false;
     string arquivochamada = nomeArquivoCSV;
     athletes atleta;
     ifstream entrada(nomeArquivoCSV);
@@ -160,46 +111,51 @@ void Binario::transCsvEmBinario(string nomeArquivoCSV){
 		
 		if (testarNomeArquivoBin(nomeArquivoBin)) {
 			
-			nomeCorreto = true;
-			ofstream saida(nomeArquivoBin, ios::binary);
+	ofstream saida(nomeArquivoBin, ios::binary);
 
-			if (!saida.is_open()) {
-				throw runtime_error("Erro ao abrir arquivo de saída.");
-			}
+	if (!saida.is_open()) {
+		throw runtime_error("Erro ao abrir arquivo de saída.");
+	}
 
-			cout << "Aguarde enquanto os dados são lidos do arquivo CSV..." << endl;
+	cout << "Aguarde enquanto os dados são lidos do arquivo CSV..." << endl;
 
-			// Lê o cabeçalho do arquivo CSV
-			string cabecalho;
-			getline(entrada, cabecalho);
+	// Lê o cabeçalho do arquivo CSV
+	string cabecalho;
+	getline(entrada, cabecalho);
     
-			while(entrada){
-				// leitura dos dados
-				entrada.getline(atleta.measure, 10, ',');
-				entrada.getline(atleta.quantile, 80, ',');
-				entrada.getline(atleta.area, 50, ',');
-				entrada.getline(atleta.sex, 15, ',');
-				entrada.getline(atleta.age, 20, ',');
-				entrada.getline(atleta.geography, 90, ',');
-				entrada.getline(atleta.ethnic, 60, ',');
-				entrada.getline(atleta.value, 15);
+	while(entrada){
+	    // leitura dos dados
+		entrada.getline(atleta.measure, 10, ',');
+		entrada.getline(atleta.quantile, 80, ',');
+		entrada.getline(atleta.area, 50, ',');
+		entrada.getline(atleta.sex, 15, ',');
+		entrada.getline(atleta.age, 20, ',');
+		entrada.getline(atleta.geography, 90, ',');
+		entrada.getline(atleta.ethnic, 60, ',');
+		entrada.getline(atleta.value, 15);
 
-                if (entrada){
-                    saida.write(reinterpret_cast<char*>(&atleta), sizeof(athletes));
-                }
-			}
+        if (entrada){
+            saida.write(reinterpret_cast<char*>(&atleta), sizeof(athletes));
+            }
+	}
 //teste
-			entrada.close();
-			cout << "Dados gravados em binario com sucesso." << endl;
-			saida.close();
+	entrada.close();
+	cout << "Dados gravados em binario com sucesso." << endl;
+	saida.close();
 
-			int opcao;
-			cout << "Você deseja verificar se a leitura foi correta com a criação de outro CSV?" << endl;
-			cout << "1. Sim" << endl;
-			cout << "2. Não" << endl;
-			cin >> opcao;
+	int opcao;
+	cout << "Você deseja verificar se a leitura foi correta com a criação de outro CSV?" << endl;
+	cout << "1. Sim" << endl;
+	cout << "2. Não" << endl;
+	cin >> opcao;
+    
+	ifstream verTamanho(nomeArquivoBin, ios::binary);
 
-			ifstream verTamanho(nomeArquivoBin, ios::binary);
+	int tamanhoRegistro = sizeof(athletes);
+	verTamanho.seekg(0, ios::end);
+	int totalBytes = verTamanho.tellg();
+	int totalRegistros = totalBytes / tamanhoRegistro;
+	tamanhoArquivo = totalRegistros;
 
             // atribuo o tamanho do arquivo
             int quantidade = getTamanho();
@@ -217,6 +173,14 @@ void Binario::transCsvEmBinario(string nomeArquivoCSV){
 			cout << "Por favor, não se esqueça de adicionar o '.bin' no final do nome." << endl; 
 			}
 		}
+	cout << "Quantidade de dados gravados: " << tamanhoArquivo << endl;
+
+	if (opcao == 1){
+		transBinarioEmCsv(nomeArquivoBin, arquivochamada);
+	}else if(opcao == 2){
+		return;
+	}
+		
 }
 
 void Binario::transBinarioEmCsv(string nomeArquivoBin, string nomeArquivoCSV){
@@ -230,6 +194,7 @@ void Binario::transBinarioEmCsv(string nomeArquivoBin, string nomeArquivoCSV){
     cout << "Digite o nome do arquivo no qual deseja gravar: ";
     string nomeArquivoCSVnovo;
     cin >> nomeArquivoCSVnovo;
+    nomeArquivoCSVnovo += ".csv";
     ofstream arquivoCsv(nomeArquivoCSVnovo);
 
     if(!arquivoCsv){
@@ -477,6 +442,7 @@ void menuPrincipal(){
     string nomeArquivoCSV;
     cout << "Qual o nome do arquivo que deseja ler? ";
     cin >> nomeArquivoCSV;
+    nomeArquivoCSV += ".csv";
     binario.transCsvEmBinario(nomeArquivoCSV);
     string nomeArquivoBin = binario.getNomeArquivo();
 
