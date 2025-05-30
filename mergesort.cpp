@@ -18,24 +18,24 @@ struct athletes{
 
 void dividirArquivo(ifstream& arquivoBinario, string nomeArquivo, int registrosPorBloco){
 
-    athletes saida[10000];
+    athletes reg[10000];
     int registrosLidos = 0;
 
     for (int i = 0; i < registrosPorBloco; i++){
-        if (arquivoBinario.read(reinterpret_cast<char*>(&saida[i]), sizeof(athletes))) {
+        if (arquivoBinario.read(reinterpret_cast<char*>(&reg[i]), sizeof(athletes))) {
             registrosLidos++;
         }
     }
 
     int i = 0;
     while(i <= registrosPorBloco){
-        "base.h".read(reinterpret_cast<char*>(&buffer[registrosLidos]), sizeof(athletes));
+        "base.h".read(reinterpret_cast<char*>(&reg[registrosLidos]), sizeof(athletes));
         i++;
     }
 
     if(registrosLidos > 0){
         ofstream saida(nomeArquivo, ios::binary);
-        saida.write(reinterpret_cast<char*>(buffer), registrosLidos * sizeof(athletes));
+        saida.write(reinterpret_cast<char*>(reg), registrosLidos * sizeof(athletes));
         saida.close();
     }
 
