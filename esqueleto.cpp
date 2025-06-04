@@ -308,9 +308,8 @@ int Binario::alterarEmPosicao(int posicao) {
         break;
         case 8:
             cout << "Digite o novo 'Value' do atleta: " << endl;
-            float novo_value;
-            cin >> atleta.value;
-            cin.ignore();
+            cin.getline(atleta.value, sizeof(atleta.value));
+        break;
         default:
             cout <<"Opção inválida. " << endl;
             return -1;
@@ -379,7 +378,6 @@ bool Binario::inserePosicao(int posicao){
     if (posicao == tamanhoAtual) {
 		novoBinario.write(reinterpret_cast<char*>(&atletasLidos), sizeof(athletes));
 	}
-		
 
     tamanhoArquivo++;
     binario.close();
